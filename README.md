@@ -200,6 +200,13 @@ pwsh -File uninstall.ps1
 
 想看每版改了什么，去仓库根目录的 [CHANGELOG.md](CHANGELOG.md)（更新记录）。
 
+## 怎么查自己装的是哪个版本
+
+| 序号 | 方法 |
+|---|---|
+| 1 | 看安装时的输出：安装脚本最后一行会显示 `Installed version: x.x.x` |
+| 2 | 对比 GitHub 仓库最新的 [VERSION 文件](VERSION)：把仓库里的 VERSION 和你装的时候记下的版本号一比就知道落了几版 |
+
 ## 版本说明
 
 | 序号 | 内容 |
