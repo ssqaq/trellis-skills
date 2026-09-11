@@ -1,6 +1,6 @@
-# Trellis Skills 汉化大白话版（12 个 Codex 技能包）
+# Trellis Skills 汉化大白话版（13 个 Codex 技能包）
 
-这是一套给 **Codex（以及兼容 Codex skill 规范的 AI 编程工具）** 用的技能包。装好之后，AI 干活会自动按一套固定流程走：先想清楚再动手、写完代码先做质量检查、发布说明用人话写、收尾自动存档。
+这是一套给 **Codex（以及兼容 Codex skill 规范的 AI 编程工具）** 用的技能包。装好之后，AI 干活会自动按一套固定流程走：先想清楚再动手、写完代码先做质量检查、发布说明用人话写、收尾自动存档。还有一键安装脚本，下载后跑一条命令就装好。
 
 ## 这是干什么用的
 
@@ -33,7 +33,7 @@
 | 1 | trellis-start | 开新任务：帮你把需求整理成任务文档 |
 | 2 | trellis-brainstorm | 想方案：需求不清楚时，先帮你把思路理清楚 |
 | 3 | trellis-before-dev | 写码前准备：动手前先查项目规范和现有代码 |
-| 4 | trellis-check | 质量检查：改完代码做全面检查（含"发版说明必须大白话"检查） |
+| 4 | trellis-check | 质量检查：改完代码做全面检查（含"发版说明和 README 必须大白话"检查） |
 | 5 | trellis-update-spec | 更新规范：把这次学到的东西写进项目规范 |
 | 6 | trellis-continue | 继续任务：接着上次的任务继续干 |
 | 7 | trellis-finish-work | 收尾：存档任务、记录改动（含"发版说明大白话"规则） |
@@ -42,6 +42,7 @@
 | 10 | trellis-meta | 元信息：查看和管理这套流程本身 |
 | 11 | trellis-session-insight | 会话记录：查看以前干过什么 |
 | 12 | trellis-spec-bootstrap | 规范起步：新项目第一次生成项目规范 |
+| 13 | trellis-setup | 一键初始化：检查环境、装档案柜，新项目第一次用先喊它 |
 
 ## 怎么下载
 
@@ -62,9 +63,21 @@ git clone https://github.com/ssqaq/trellis-skills.git
 
 ## 怎么安装（Windows）
 
+### 方法一：一键安装（推荐）
+
+下载仓库后，在仓库文件夹里打开命令行，跑一条命令：
+
+```powershell
+pwsh -File install.ps1
+```
+
+它会自动完成：把 13 个技能装到你的全局目录 + 检查 Trellis 主程序装没装 + 告诉你下一步做什么。
+
+### 方法二：手动安装
+
 ### 第 1 步：把技能复制到全局目录
 
-把下载下来的 `skills` 文件夹里的 **12 个 trellis 开头的文件夹**，全部复制到：
+把下载下来的 `skills` 文件夹里的 **13 个 trellis 开头的文件夹**，全部复制到：
 
 ```text
 C:\Users\你的用户名\.agents\skills\
@@ -84,11 +97,12 @@ C:\Users\你的用户名\.agents\skills\
 ├── trellis-meta\
 ├── trellis-session-insight\
 ├── trellis-spec-bootstrap\
+├── trellis-setup\
 ├── trellis-start\
 └── trellis-update-spec\
 ```
 
-装好后，**你所有的 Codex 会话都能自动识别这 12 个技能**，不管在哪个项目里。
+装好后，**你所有的 Codex 会话都能自动识别这 13 个技能**，不管在哪个项目里。
 
 ### 第 2 步：安装 Trellis 主程序
 
@@ -108,7 +122,7 @@ trellis --version
 
 ### 第 3 步：给你的项目建档案柜（每个项目只做一次）
 
-进入你的项目文件夹，跑一次初始化：
+进入你的项目文件夹，跟 AI 说一句"初始化 Trellis"（会自动触发 trellis-setup 技能），或者自己跑一次初始化：
 
 ```bash
 cd 你的项目文件夹
@@ -127,6 +141,7 @@ trellis init
 | 2 | （AI 改完代码后） | 自动触发 trellis-check 做质量检查 |
 | 3 | "这次改动发到 GitHub 上" | AI 会按 trellis-finish-work 的规矩，把 Release 说明写成大白话 |
 | 4 | "收尾吧" | 自动存档任务、记录这次改动 |
+| 5 | "初始化 Trellis" | 自动触发 trellis-setup，检查环境并给项目建档案柜 |
 
 ### 想手动指定用某个技能也可以
 
@@ -149,11 +164,23 @@ $trellis-brainstorm 我想给软件加个导出功能，帮我理理思路
 
 ## 卸载方法
 
-把 `C:\Users\你的用户名\.agents\skills\` 下 12 个 trellis 开头的文件夹删掉即可。项目里的 `.trellis` 文件夹删不删都行，删了就是丢掉这个项目的任务档案。
+把 `C:\Users\你的用户名\.agents\skills\` 下 13 个 trellis 开头的文件夹删掉即可。项目里的 `.trellis` 文件夹删不删都行，删了就是丢掉这个项目的任务档案。
+
+## 怎么升级（老用户看这里）
+
+| 序号 | 步骤 | 操作 |
+|---|---|---|
+| 1 | 下载最新版 | 重新 git clone 或下载 ZIP（或在自己克隆的文件夹里跑 git pull） |
+| 2 | 重跑安装脚本 | 在仓库文件夹里再跑一次 `pwsh -File install.ps1`，它会自动覆盖旧版技能 |
+| 3 | 完成 | 不需要重新 `trellis init`，项目档案柜不受影响 |
+
+想看每版改了什么，去仓库根目录的 [CHANGELOG.md](CHANGELOG.md)（更新记录）。
 
 ## 版本说明
 
 | 序号 | 内容 |
 |---|---|
-| 1 | 基于 Trellis 0.7.0-beta.3 的 12 个技能 |
-| 2 | 新增：GitHub Release 发版说明必须写大白话的规则（在 trellis-check 和 trellis-finish-work 两个技能里） |
+| 1 | 基于 Trellis 0.7.0-beta.3 的 13 个技能 |
+| 2 | 新增：GitHub Release 发版说明和 README 必须写大白话的规则（在 trellis-check 和 trellis-finish-work 两个技能里） |
+| 3 | 新增：一键安装脚本 install.ps1 |
+| 4 | 新增：trellis-setup 总管技能，一句"初始化 Trellis"完成环境检查和项目初始化 |
