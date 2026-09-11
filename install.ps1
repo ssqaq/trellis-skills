@@ -33,7 +33,7 @@ foreach ($skill in $trellisSkills) {
 
 Write-Host ""
 Write-Host "Done. $copied skills installed to: $skillsDst" -ForegroundColor Green
-Write-Host "Installed version: 1.3.0 (see VERSION file for details)" -ForegroundColor Cyan
+Write-Host "Installed version: 1.3.1 (see VERSION file for details)" -ForegroundColor Cyan
 
 # 3. Check Trellis CLI
 $trellisCmd = Get-Command trellis -ErrorAction SilentlyContinue
