@@ -42,15 +42,23 @@ Run the project's lint, type-check, and test commands. Fix any failures before p
 
 ## Step 4: Review Against Checklist
 
-### Release Notes (when this change will be published to GitHub)
+### Release Notes and README (when this change will be published to GitHub)
 
-Skip this section if no GitHub Release will be created for this change. Otherwise, verify the Release notes (or the draft intended for them):
+Skip this section if neither a GitHub Release nor a README update will be published for this change. Otherwise:
+
+**Release notes** (when a Release will be created) — verify the notes (or the draft intended for them):
 
 - [ ] Written in plain language a non-developer can understand?
 - [ ] Answers "what changed", "what it means for the user", and "whether the user needs to act" (e.g. reinstall)?
 - [ ] Free of commit-style prefixes (`feat:`, `fix:`), file names, function/class names, and internal jargon in user-facing text?
 
-If any box fails, rewrite the notes and re-verify before reporting completion.
+**README** (when this task changes user-visible behavior, installation, or usage and the project has a README) — verify the README:
+
+- [ ] Still matches what the software actually does after this change?
+- [ ] Installation and usage instructions still work as written?
+- [ ] New or changed user-visible behavior is described in plain language?
+
+If any box fails, rewrite the affected text and re-verify before reporting completion. In this check, "publish to GitHub" means pushing, tagging, or creating a GitHub Release that exposes these changes to users.
 
 ### Code Quality
 

@@ -7,16 +7,17 @@ description: "Wrap up the current session: verify quality gate passed, remind us
 
 Wrap up the current session: archive the active task (and any other completed-but-unarchived tasks the user wants to clean up) and record the session journal. Code commits are NOT done here — those happen in workflow Phase 3.4 before you invoke this command.
 
-## Plain-language Release notes rule
+## Plain-language Release notes and README rule
 
-When this task's outcome will be published to GitHub (push, tag, or GitHub Release), the GitHub Release notes MUST be written in plain language that a non-developer can understand. Before considering the session wrapped:
+When this task's outcome will be published to GitHub (push, tag, or GitHub Release), two user-facing documents MUST be plain enough for a non-developer to understand. Before considering the session wrapped:
 
-1. Confirm the Release notes (or the draft intended for them) answer, in this order:
+1. **Release notes** (when a Release will be created) — confirm the notes (or the draft intended for them) answer, in this order:
    - **What changed in this update** — one numbered item per user-visible change, describing behavior, not implementation
    - **What it means for the user** — the practical benefit or impact
    - **Whether the user needs to act** — e.g. whether they must download and reinstall the new package
-2. Write for a non-technical reader: no bare commit-style prefixes (`feat:`, `fix:`, `chore:`), no file names, no function/class names, no internal jargon in the user-facing notes. Technical details belong in commit messages, not Release notes.
-3. If the notes do not meet this standard, rewrite them before wrapping up. If no Release will be created for this change, skip this rule.
+2. **README** (when this task changes user-visible behavior, installation, or usage and the project has a README) — confirm the README still matches reality: what the software does, how to install it, and how to use it, all in plain language.
+3. Write for a non-technical reader: no bare commit-style prefixes (`feat:`, `fix:`, `chore:`), no file names, no function/class names, no internal jargon in Release notes or README user-facing text. Technical details belong in commit messages.
+4. If either document does not meet this standard, rewrite it before wrapping up. If no Release will be created and no user-visible behavior/installation/usage changed, skip this rule.
 
 Example of the required style (adapt the language to the project's normal user language):
 
