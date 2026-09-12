@@ -6,6 +6,8 @@ $ErrorActionPreference = 'Stop'
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $skillsSrc = Join-Path $scriptDir 'skills'
 $skillsDst = Join-Path $env:USERPROFILE '.agents\skills'
+$versionPath = Join-Path $scriptDir 'VERSION'
+$installedVersion = if (Test-Path -LiteralPath $versionPath) { (Get-Content -LiteralPath $versionPath -Raw).Trim() } else { 'unknown' }
 
 Write-Host '=== Trellis Skills Installer ===' -ForegroundColor Cyan
 
@@ -33,7 +35,7 @@ foreach ($skill in $trellisSkills) {
 
 Write-Host ""
 Write-Host "Done. $copied skills installed to: $skillsDst" -ForegroundColor Green
-Write-Host "Installed version: 1.3.1 (see VERSION file for details)" -ForegroundColor Cyan
+Write-Host "Installed version: $installedVersion (see VERSION file for details)" -ForegroundColor Cyan
 
 # 3. Check Trellis CLI
 $trellisCmd = Get-Command trellis -ErrorAction SilentlyContinue
