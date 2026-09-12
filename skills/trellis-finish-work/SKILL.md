@@ -1,11 +1,22 @@
 ---
 name: trellis-finish-work
-description: "Wrap up the current session: verify quality gate passed, remind user to commit, archive completed tasks, and record session progress to the developer journal. Use when done coding and ready to end the session."
+description: "Wrap up the current session: run the full quality gate first, then verify the tree, archive completed tasks, and record session progress to the developer journal. Use when done coding and ready to end the session."
 ---
 
 # Finish Work
 
-Wrap up the current session: archive the active task (and any other completed-but-unarchived tasks the user wants to clean up) and record the session journal. Code commits are NOT done here — those happen in workflow Phase 3.4 before you invoke this command.
+Wrap up the current session: run a fresh full quality check, then archive the active task (and any other completed-but-unarchived tasks the user wants to clean up) and record the session journal. Code commits are NOT done here — those happen in workflow Phase 3.4 before you invoke this command.
+
+## Mandatory first step: run the full quality check
+
+This is a real gate, not a reminder to check whether somebody checked earlier.
+
+1. At the very start of every `finish-work` run, dispatch or invoke `trellis-check` and wait for its complete result. On platforms with sub-agent support, dispatch the `trellis-check` agent. On platforms without it, read `skills/trellis-check/SKILL.md` and perform the same full check in the main session.
+2. The check must cover the current task's complete diff and every affected package or layer. If the task will be pushed, tagged, or released on GitHub, include the Release notes and README checks too.
+3. If the check finds a failure, stop immediately. Fix the failure and run `trellis-check` again before continuing. Do not archive the task, record a completed session, publish, push, or claim success while the gate is failing.
+4. Only after the check passes may you continue to the state survey below, the dirty-tree check, task archive, and journal entry.
+
+`finish-work` is the guaranteed entry point for this gate. A session merely becoming idle, completed, or closed is not a universal platform event and does not by itself guarantee that this skill ran. The workflow must route a completed task into `finish-work` (or the user must explicitly say to finish/close the task).
 
 ## Plain-language Release notes and README rule
 
@@ -33,7 +44,7 @@ Do you need to do anything:
 Yes. Download the new installer and replace the old version.
 ```
 
-## Step 1: Survey current state
+## Step 1: Survey current state after the quality gate passes
 
 ```bash
 python ./.trellis/scripts/get_context.py --mode record
