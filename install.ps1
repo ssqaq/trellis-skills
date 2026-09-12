@@ -37,7 +37,13 @@ Write-Host ""
 Write-Host "Done. $copied skills installed to: $skillsDst" -ForegroundColor Green
 Write-Host "Installed version: $installedVersion (see VERSION file for details)" -ForegroundColor Cyan
 
-# 3. Check Trellis CLI
+# 3. Update registered project-local Trellis skill copies
+$syncScript = Join-Path $scriptDir 'sync-local-skills.ps1'
+if (Test-Path -LiteralPath $syncScript) {
+    & $syncScript -FromRegistry
+}
+
+# 4. Check Trellis CLI
 $trellisCmd = Get-Command trellis -ErrorAction SilentlyContinue
 if ($trellisCmd) {
     Write-Host 'Trellis CLI: installed.' -ForegroundColor Green
@@ -46,7 +52,10 @@ if ($trellisCmd) {
     Write-Host 'Install it with:  npm install -g @mindfoldhq/trellis' -ForegroundColor Yellow
 }
 
-# 4. Next-step reminder
+# 5. Next-step reminder
+Write-Host 'Register a project-local skill copy once (optional):' -ForegroundColor Cyan
+Write-Host '  pwsh -File sync-local-skills.ps1 -ProjectRoot D:\your-project-folder'
+Write-Host 'After registration, future runs of this installer update that project automatically.' -ForegroundColor Cyan
 Write-Host ""
 Write-Host 'Next step (once per project):' -ForegroundColor Cyan
 Write-Host '  cd your-project-folder'
