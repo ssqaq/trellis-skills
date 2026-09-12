@@ -35,7 +35,8 @@ Shows the Phase Index (Plan / Execute / Finish) with routing + skill mapping.
 - `status=planning` + required artifacts complete + required jsonl curated or inline mode → **1.4** (ask for start review; only run `task.py start` after user confirms)
 - `status=in_progress` + implementation not started → **2.1**
 - `status=in_progress` + implementation done, not yet checked → **2.2**
-- `status=in_progress` + check passed → **3.3** (spec update) → **3.4** (commit)
+- `status=in_progress` + check passed → **3.3** (spec update) → **3.4** (authorized commit) → **3.5** (`trellis-finish-work`, automatically in the same turn)
+- `status=in_progress` + implementation/spec updates/authorized commits done → **3.5** directly. Do not wait for `completed`; normal archive writes that status after the finish gate.
 - `status=completed` (rare; usually archived immediately) → finish flow; invoke `trellis-finish-work`, whose first step is a fresh full `trellis-check` before archive
 
 Phase rules (full detail in `.trellis/workflow.md`):
@@ -53,6 +54,10 @@ python ./.trellis/scripts/get_context.py --mode phase --step <X.X> --platform co
 ```
 
 Follow the loaded instructions. After each `[required]` step completes, move to the next.
+The main session must not stop after committing or merely remind the user to
+invoke finish-work. Continue into it when this task's requested work is complete.
+Delegated agents return their scoped result to the main session; they do not
+start another task closeout. Respect explicit pause/stop/Trellis opt-out requests.
 
 ---
 

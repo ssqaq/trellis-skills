@@ -44,12 +44,31 @@ trellis init
 
 Then verify `.trellis/` now exists. If init fails, report the exact error message and the command to retry; do not guess at fixes.
 
-## Step 4: Report readiness
+## Step 4: Connect automatic closeout and register this project
+
+After initialization (including an already initialized project), run the bundled
+`scripts/upgrade_project.py` using its absolute installed location:
+
+```text
+python <this-skill-directory>/scripts/upgrade_project.py --project-root <project-root> --sync-skills --register
+```
+
+Prefer this skill's current global installation as the source when `trellis init`
+has just generated older project-local skills. The helper refreshes existing
+project skill copies from its sibling Trellis skills, adds the closeout route to
+`AGENTS.md`, the main workflow and saved workflow variants, and registers the
+project for future installer upgrades. Originals are backed up outside the
+project under `~/.trellis-skills/backups/`. It does not change tasks, specs,
+journals or business code. If migration fails, report the actual failure; do not
+claim automatic closeout is ready. Never rerun `trellis init` to repair this route.
+
+## Step 5: Report readiness
 
 Report in plain language, in this order:
 
 1. Whether this project has its `.trellis/` cabinet (initialized / just created / failed)
 2. The Trellis CLI status and version
-3. What the user can do next: start working normally — Trellis skills (trellis-start, trellis-check, etc.) trigger automatically during task work; no special command is needed
+3. Whether automatic closeout is connected and the project is registered for upgrades
+4. What the user can do next: start working normally. On completion of a normal Trellis coding task, the main session continues into finish-work and its quality check without a separate user reminder. This does not run when the app is closed or the user pauses the task.
 
 Do not create any Trellis task in this step. Task creation is a separate decision the user makes after setup.

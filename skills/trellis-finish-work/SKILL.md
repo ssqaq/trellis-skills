@@ -1,6 +1,6 @@
 ---
 name: trellis-finish-work
-description: "Wrap up the current session: run the full quality gate first, then verify the tree, archive completed tasks, and record session progress to the developer journal. Use when done coding and ready to end the session."
+description: "Complete a normal Trellis coding task in the main session: run the full quality gate, archive and record progress before the final completion reply. Invoke automatically when requested implementation and authorized code commits are done, even without an explicit finish command."
 ---
 
 # Finish Work
@@ -11,12 +11,24 @@ Wrap up the current session: run a fresh full quality check, then archive the ac
 
 This is a real gate, not a reminder to check whether somebody checked earlier.
 
-1. At the very start of every `finish-work` run, dispatch or invoke `trellis-check` and wait for its complete result. On platforms with sub-agent support, dispatch the `trellis-check` agent. On platforms without it, read `skills/trellis-check/SKILL.md` and perform the same full check in the main session.
+1. At the very start of every `finish-work` run, dispatch or invoke `trellis-check` and wait for its complete result. On platforms with sub-agent support, dispatch the `trellis-check` agent. On platforms without it, resolve the installed `trellis-check/SKILL.md` in project/global skills and perform the same full check in the main session; do not assume a repository-root `skills/` directory exists.
 2. The check must cover the current task's complete diff and every affected package or layer. If the task will be pushed, tagged, or released on GitHub, include the Release notes and README checks too.
 3. If the check finds a failure, stop immediately. Fix the failure and run `trellis-check` again before continuing. Do not archive the task, record a completed session, publish, push, or claim success while the gate is failing.
 4. Only after the check passes may you continue to the state survey below, the dirty-tree check, task archive, and journal entry.
 
 `finish-work` is the guaranteed entry point for this gate. A session merely becoming idle, completed, or closed is not a universal platform event and does not by itself guarantee that this skill ran. The workflow must route a completed task into `finish-work` (or the user must explicitly say to finish/close the task).
+
+The main session invokes this skill when the current task's requested work and
+authorized code commits are done, while its status is still `in_progress`.
+Do not ask the user to repeat a finish command. Questions, partial work, pauses,
+stops and Trellis opt-out are not closeout triggers. Implement/check sub-agents
+return their results without recursively invoking this skill or archiving.
+
+Keep the passing full-check evidence during the same closeout attempt if only
+archive/journal work remains. Do not start another finish-work loop just for
+bookkeeping or a push-only request. Code/check-input changes invalidate the
+result and require rechecking. Record the actual commands, exit/results and
+tested revision/diff in the task evidence; `check.jsonl` only lists context.
 
 ## Plain-language Release notes and README rule
 

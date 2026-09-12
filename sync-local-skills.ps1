@@ -2,7 +2,8 @@
 param(
     [string[]]$ProjectRoot = @(),
     [switch]$FromRegistry,
-    [string]$RegistryPath = ''
+    [string]$RegistryPath = '',
+    [string]$BackupRoot = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -11,6 +12,10 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $skillsSrc = Join-Path $scriptDir 'skills'
 if ([string]::IsNullOrWhiteSpace($RegistryPath)) {
     $RegistryPath = Join-Path $env:USERPROFILE '.trellis-skills\projects.json'
+}
+$RegistryPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($RegistryPath)
+if (-not [string]::IsNullOrWhiteSpace($BackupRoot)) {
+    $BackupRoot = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($BackupRoot)
 }
 
 if (-not (Test-Path -LiteralPath $skillsSrc)) {
@@ -48,53 +53,23 @@ function Read-RegisteredRoots {
     return @($data)
 }
 
-function Get-ExistingSkillRoots {
+function Get-ProjectInstallations {
     param([string[]]$Roots)
 
-    $found = New-Object System.Collections.Generic.List[string]
-    foreach ($root in ($Roots | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })) {
-        $resolvedRoot = Resolve-FullPath $root
-        if ($null -eq $resolvedRoot) {
-            Write-Warning "Project root not found, skipped: $root"
-            continue
-        }
-
-        $candidates = New-Object System.Collections.Generic.List[string]
-        foreach ($kind in @('.agents', '.codex')) {
-            $direct = Join-Path $resolvedRoot "$kind\skills"
-            if (Test-Path -LiteralPath $direct) {
-                $candidates.Add((Get-Item -LiteralPath $direct).FullName)
-            }
-        }
-
-        $nestedMetaDirs = Get-ChildItem -LiteralPath $resolvedRoot -Directory -Recurse -Force -ErrorAction SilentlyContinue |
-            Where-Object {
-                $_.Name -in @('.agents', '.codex') -and
-                $_.FullName -notmatch '\\node_modules\\' -and
-                $_.FullName -notmatch '\\.git(\\|$)'
-            }
-        foreach ($metaDir in $nestedMetaDirs) {
-            $nestedSkills = Join-Path $metaDir.FullName 'skills'
-            if (Test-Path -LiteralPath $nestedSkills) {
-                $candidates.Add((Get-Item -LiteralPath $nestedSkills).FullName)
-            }
-        }
-
-        foreach ($candidate in ($candidates | Sort-Object -Unique)) {
-            $hasTrellis = @(Get-ChildItem -LiteralPath $candidate -Directory -ErrorAction SilentlyContinue |
-                Where-Object { $_.Name -like 'trellis-*' }).Count -gt 0
-            if ($hasTrellis -and ($found -notcontains $candidate)) {
-                $found.Add($candidate)
-            }
-        }
-    }
-    return @($found)
+    $helper = Join-Path $skillsSrc 'trellis-setup\scripts\upgrade_project.py'
+    Write-Output "Scanning registered projects for Trellis installations..." | Out-Host
+    $json = & python $helper --discover-projects @Roots
+    if ($LASTEXITCODE -ne 0) { throw 'Unable to scan all registered projects.' }
+    $result = $json | ConvertFrom-Json
+    foreach ($missing in $result.Missing) { Write-Warning "Project root not found, skipped: $missing" }
+    Write-Output "Scanned $($result.Directories) directories; found $($result.Projects.Count) initialized projects." | Out-Host
+    return $result
 }
 
 $registered = @(Read-RegisteredRoots)
-$allRoots = @($registered + $ProjectRoot) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | ForEach-Object {
-    Resolve-FullPath $_
-} | Where-Object { $null -ne $_ } | Sort-Object -Unique
+$allRoots = @(@($registered + $ProjectRoot) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | ForEach-Object {
+    $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($_)
+} | Sort-Object -Unique)
 
 if ($ProjectRoot.Count -gt 0) {
     $registryDir = Split-Path -Parent $RegistryPath
@@ -106,15 +81,22 @@ if ($ProjectRoot.Count -gt 0) {
 if ($allRoots.Count -eq 0) {
     if ($FromRegistry) {
         Write-Output "No registered project roots found. Register one with -ProjectRoot <path>."
-        exit 0
+        return
     }
     throw 'No project root supplied. Use -ProjectRoot <path> to register and sync a project.'
 }
 
-$targets = @(Get-ExistingSkillRoots $allRoots)
+$installations = Get-ProjectInstallations $allRoots
+$targets = @($installations.Skills)
 foreach ($target in $targets) {
     foreach ($skill in $trellisSkills) {
-        Copy-Item -LiteralPath $skill.FullName -Destination $target -Recurse -Force
+        $destination = Join-Path $target $skill.Name
+        if (Test-Path -LiteralPath $destination) {
+            $linked = @(Get-Item -LiteralPath $destination -Force; Get-ChildItem -LiteralPath $destination -Recurse -Force) |
+                Where-Object { $_.Attributes -band [IO.FileAttributes]::ReparsePoint }
+            if ($linked) { throw "Refusing to overwrite a linked skill path: $destination" }
+        }
+        Copy-Item -LiteralPath $skill.FullName -Destination $target -Recurse -Force -Exclude '__pycache__', '*.pyc'
     }
     Write-Output "Updated $($trellisSkills.Count) Trellis skills: $target"
 }
@@ -125,3 +107,15 @@ if ($targets.Count -eq 0) {
 else {
     Write-Output "Updated $($targets.Count) existing Trellis skill installation(s)."
 }
+
+# Initialized projects may use global skills without any project skill directory.
+$upgradeScript = Join-Path $skillsSrc 'trellis-setup\scripts\upgrade_project.py'
+if ([string]::IsNullOrWhiteSpace($BackupRoot)) {
+    $BackupRoot = Join-Path (Split-Path -Parent $RegistryPath) 'backups'
+}
+foreach ($project in $installations.Projects) {
+    $result = & python $upgradeScript --project-root $project --backup-root $BackupRoot
+    if ($LASTEXITCODE -ne 0) { throw "Workflow upgrade failed for $project`: $($result -join ' ')" }
+    Write-Output $result
+}
+Write-Output "Checked automatic closeout for $($installations.Projects.Count) initialized project(s)."

@@ -27,6 +27,7 @@ Each phase contains numbered steps, such as `1.3 Configure context`. These numbe
 - Platforms with sub-agent support: dispatch `trellis-implement` by default for implementation and `trellis-check` for checking.
 - Platforms without sub-agent support: the main session reads skills such as `trellis-before-dev`, then executes directly.
 - When the task reaches the finish route, `finish-work` must invoke a fresh full `trellis-check` before it can archive the task or record the session.
+- The normal `in_progress` route must continue into finish-work without another user prompt when implementation, checks, specs and authorized commits are done. Archive writes `completed`; do not rely on that later state to initiate closeout. Questions, partial work and paused/stopped tasks are excluded.
 
 When changing local AI behavior, update the routing descriptions in `workflow.md` first, then check whether the corresponding platform skill, command, or agent files need to stay in sync.
 
@@ -47,7 +48,7 @@ Hooks choose the right block based on current task status and inject it into the
 | `no_task` | The current session has no active task. |
 | `planning` | The task is still in requirements, research, or context configuration. |
 | `in_progress` | The task has entered implementation and checking. |
-| `completed` | The task is ready for the finish route; `finish-work` runs the fresh quality gate before archive. |
+| `completed` | Usually already archived in normal flow; a compatibility route, not the primary automatic-closeout trigger. |
 
 If the user wants to change policies such as "whether to create a task when there is no task," "when task creation may be skipped," or "whether sub-agents are required," edit these state blocks and the routing table above them.
 

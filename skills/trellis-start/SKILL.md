@@ -19,6 +19,13 @@ python ./.trellis/scripts/get_context.py
 If this output includes a line beginning `Trellis update available:`, copy the full line verbatim when summarizing session context. Do not shorten operational command hints.
 
 ## Step 2: Workflow overview
+On an initialized project whose `AGENTS.md` or selected workflow lacks `TRELLIS-SKILLS:AUTOFINISH:START`,
+use the current global `trellis-setup/scripts/upgrade_project.py` with
+`--project-root <project-root> --sync-skills --register` to connect automatic
+closeout before reading phase instructions. This also supports projects created
+by a manual `trellis init`. Preserve project-specific instructions; report any
+migration failure rather than assuming the route exists.
+
 Compact Phase Index, request triage rules, planning artifact contract, and the step-detail command.
 
 ```bash
@@ -43,7 +50,7 @@ From Step 1 you know the current task and status. Check the task directory:
 
 - **Active task status `planning` + no `prd.md`** → Phase 1.1. Load the `trellis-brainstorm` skill.
 - **Active task status `planning` + `prd.md` exists** → stay in Phase 1. Lightweight tasks can be PRD-only; complex tasks need `design.md` + `implement.md`. Load the relevant Phase 1 step detail before `task.py start`.
-- **Active task status `in_progress`** → Phase 2 step 2.1. Load the step detail:
+- **Active task status `in_progress`** → load `trellis-continue` and route using completed artifacts and current evidence. Do not restart implementation if code and checks are already done. For work not yet implemented, load:
   ```bash
   python ./.trellis/scripts/get_context.py --mode phase --step 2.1 --platform codex
   ```
@@ -58,6 +65,7 @@ From Step 1 you know the current task and status. Check the task directory:
 | New feature / unclear requirements | `trellis-brainstorm` |
 | About to write code | `trellis-before-dev` |
 | Done coding / quality check | `trellis-check` |
+| Current task work complete, preparing final reply | `trellis-finish-work` automatically; wait for the full check and finish the archive/journal flow |
 | Stuck / fixed same bug multiple times | `trellis-break-loop` |
 | Learned something worth capturing | `trellis-update-spec` |
 

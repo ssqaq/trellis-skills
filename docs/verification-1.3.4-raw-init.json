@@ -1,0 +1,29 @@
+{
+  "date": "2026-09-12",
+  "platform": "Windows / Codex desktop, fresh task",
+  "scenario": "Raw trellis init project with old workflow and project skills; only global 1.3.4 installed",
+  "followupMessages": 0,
+  "explicitFinishOrCheckPrompt": false,
+  "initialProjectCloseoutMarkers": false,
+  "observedSetup": [
+    {
+      "command": "python global trellis-setup/scripts/upgrade_project.py --project-root <isolated-project> --sync-skills --register",
+      "exitCode": 0
+    }
+  ],
+  "fullQualityChecks": [
+    {
+      "command": "python -B quality_check.py",
+      "exitCode": 0
+    },
+    {
+      "command": "python -B quality_check.py",
+      "exitCode": 0
+    }
+  ],
+  "workflowUpgradeCommit": "d4b195a61c2abe462b1a82391369fd475d0a0c18",
+  "workCommit": "89e05496b912f7a1756bd20711d95070cbae0255",
+  "archiveCommit": "c93c243eee9ad10aeab52fc0ad9e1d6fac5a0e3a",
+  "journalCommit": "1291d116276940e63ba2e577c94fce77d6312d1a",
+  "cleanWorktree": true
+}
