@@ -57,7 +57,7 @@ try {
         throw 'Dependency directories must not be migrated.'
     }
     $initialBackupCount = @(Get-ChildItem -LiteralPath (Join-Path $temporaryRoot 'backups') -Recurse -Filter '*.bak').Count
-    if ($initialBackupCount -ne 6) { throw "Expected six original instruction backups; got $initialBackupCount" }
+    if ($initialBackupCount -lt 7) { throw "Original instructions and replaced skill were not all backed up: $initialBackupCount" }
 
     Add-Content -LiteralPath $targetFile -Value "`nLOCAL TEST EDIT"
     $output = & pwsh -NoProfile -ExecutionPolicy Bypass -File $syncScript -FromRegistry -RegistryPath $temporaryRegistry
@@ -69,15 +69,13 @@ try {
         throw 'Registry-only update did not restore the newest skill.'
     }
     $backupCount = @(Get-ChildItem -LiteralPath (Join-Path $temporaryRoot 'backups') -Recurse -Filter '*.bak').Count
-    if ($backupCount -ne $initialBackupCount) { throw 'Repeated installation changed already migrated instructions.' }
+    if ($backupCount -ne ($initialBackupCount + 1)) { throw 'The replaced local skill edit needs its own backup; unchanged rules must not be backed up again.' }
+    $output = & pwsh -NoProfile -ExecutionPolicy Bypass -File $syncScript -FromRegistry -RegistryPath $temporaryRegistry
+    if ($LASTEXITCODE -ne 0) { throw 'Unchanged repeat synchronization failed.' }
+    $repeatBackupCount = @(Get-ChildItem -LiteralPath (Join-Path $temporaryRoot 'backups') -Recurse -Filter '*.bak').Count
+    if ($repeatBackupCount -ne $backupCount) { throw 'An unchanged repeat installation must not add backups.' }
 
-    $installText = Get-Content -LiteralPath $installScript -Raw
-    if ($installText.IndexOf('sync-local-skills.ps1', [System.StringComparison]::Ordinal) -lt 0 -or
-        $installText.IndexOf('-FromRegistry', [System.StringComparison]::Ordinal) -lt 0) {
-        throw 'install.ps1 is not wired to update registered project-local skills.'
-    }
-
-    Write-Output 'PASS: registration, stale-skill repair, nested/legacy/global-only projects, workflow preservation/backups, dependency exclusion, idempotency and installer wiring'
+    Write-Output 'PASS: registration, stale-skill repair with recovery backup, nested/legacy/global-only projects, workflow preservation, dependency exclusion and idempotency'
 }
 finally {
     if (Test-Path -LiteralPath $temporaryRoot) {

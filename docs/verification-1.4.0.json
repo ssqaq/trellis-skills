@@ -1,0 +1,115 @@
+{
+  "date": "2026-09-12",
+  "formal_release": "1.4.0",
+  "transport": "temporary marked profile and controlled release fixtures; no simulated releases published",
+  "automated": {
+    "lifecycle": 12,
+    "independent_review": 21,
+    "migration": 17,
+    "total": 50,
+    "result": "passed",
+    "powershell_sync": "passed",
+    "skill_format": {
+      "passed": 13
+    }
+  },
+  "A": {
+    "commands": [
+      {
+        "command": "\"C:\\\\Program Files\\\\PowerShell\\\\7\\\\pwsh.exe\" -Command \"python \\\"<fixture>\\\\profile\\\\.agents\\\\skills\\\\trellis-setup\\\\scripts\\\\auto_update.py\\\" apply-pending --project-root \\\"<fixture>\\\\format-project\\\" --profile \\\"<fixture>\\\\profile\\\"; python \\\"<fixture>\\\\profile\\\\.agents\\\\skills\\\\trellis-setup\\\\scripts\\\\auto_update.py\\\" check --background --project-root \\\"<fixture>\\\\format-project\\\" --invocation-id \\\"01a094aa-876c-7c01-b0c3-76c7fe3e44ef-20260912-format-seconds\\\" --profile \\\"<fixture>\\\\profile\\\" --release-fixture \\\"<fixture>\\\\release\\\\responses.json\\\"; python \\\"<fixture>\\\\profile\\\\.agents\\\\skills\\\\trellis-setup\\\\scripts\\\\auto_update.py\\\" status --project-root \\\"<fixture>\\\\format-project\\\" --profile \\\"<fixture>\\\\profile\\\"\"",
+        "exit_code": 0,
+        "output": "{\"status\": \"current\", \"version\": \"1.4.0\", \"check\": {}}\n{\"status\": \"checking-in-background\", \"pid\": 45248}"
+      },
+      {
+        "command": "\"C:\\\\Program Files\\\\PowerShell\\\\7\\\\pwsh.exe\" -Command 'python -B quality_check.py'",
+        "exit_code": 0,
+        "output": "test_formats_boundaries_and_combined_values (test_duration.DurationTests.test_formats_boundaries_and_combined_values) ... ok\ntest_rejects_negative_integers (test_duration.DurationTests.test_rejects_negative_integers) ... ok\ntest_rejects_non_integers_including_bool (test_duration.DurationTests.test_rejects_non_integers_including_bool) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n"
+      },
+      {
+        "command": "\"C:\\\\Program Files\\\\PowerShell\\\\7\\\\pwsh.exe\" -Command 'python -B quality_check.py'",
+        "exit_code": 0,
+        "output": "test_formats_boundaries_and_combined_values (test_duration.DurationTests.test_formats_boundaries_and_combined_values) ... ok\ntest_rejects_negative_integers (test_duration.DurationTests.test_rejects_negative_integers) ... ok\ntest_rejects_non_integers_including_bool (test_duration.DurationTests.test_rejects_non_integers_including_bool) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n"
+      },
+      {
+        "command": "\"C:\\\\Program Files\\\\PowerShell\\\\7\\\\pwsh.exe\" -Command \"python .\\\\.trellis\\\\scripts\\\\add_session.py --title \\\"Implement duration formatter\\\" --commit \\\"612a0309f81c8c05cc4d9002e851977acd191691\\\" --summary \\\"Implemented compact non-negative second formatting with strict validation, added boundary/error tests and README examples, and passed python -B quality_check.py (3 tests).\\\"; git status --short --branch; git log -5 --oneline --decorate\"",
+        "exit_code": 0,
+        "output": "========================================\nADD SESSION\n========================================\n\nSession: 1\nTitle: Implement duration formatter\nCommit: 612a0309f81c8c05cc4d9002e851977acd191691\n\nCurrent journal file: journal-1.md\nCurrent lines: 7\nNew content lines: 21\nTotal after append: 28\n\n[OK] Appended session to journal-1.md\n\n\n========================================\n[OK] Session 1 added successfully!\n========================================\n\nFiles updated:\n  - journal-1.md\n  - index.md\n\n[OK] Auto-committed: chore: record journal\nUpdating index.md for session 1...\n  Title: Implement duration formatter\n  Commit: `612a0309f81c8c05cc4d9002e851977acd191691`\n  Active File: journal-1.md\n\n[OK] Updated index.md successfully!\n## main\nec4d527 (HEAD -> main) chore: record journal\n81e07ff chore(task): archive 09-12-format-seconds\n612a030 feat: implement duration formatter\n51c9158 Prepare isolated duration project\n"
+      },
+      {
+        "command": "\"C:\\\\Program Files\\\\PowerShell\\\\7\\\\pwsh.exe\" -Command \"python \\\"<fixture>\\\\profile\\\\.agents\\\\skills\\\\trellis-setup\\\\scripts\\\\auto_update.py\\\" apply-pending --project-root \\\"<fixture>\\\\format-project\\\" --wait-seconds 15 --profile \\\"<fixture>\\\\profile\\\"; git status --short --branch; git log -4 --format=\\\"%H %s\\\"; python .\\\\.trellis\\\\scripts\\\\task.py list-archive\"",
+        "exit_code": 0,
+        "output": "{\"status\": \"updated\", \"version\": \"1.4.1\", \"global_updated\": true, \"projects_updated\": [\"<fixture>\\\\format-project\"], \"pending_projects\": [{\"project\": \"<fixture>\\\\parse-project\", \"reason\": \"busy\"}], \"changed_files\": 5}\n## main\n M .agents/skills/trellis-setup/VERSION\n?? .agents/skills/trellis-start/fixture-version.txt\nec4d5276ce611c6ab07223218c58347ab13d7dd9 chore: record journal\n81e07ff74918622a9d6fc4c87021fca6f91b54b9 chore(task): archive 09-12-format-seconds\n612a0309f81c8c05cc4d9002e851977acd191691 feat: implement duration formatter\n51c91588e1f9567d3ae6acfbd1e37ae67d2a2ef1 Prepare isolated duration project\n\u001b[0;34mArchived tasks:\u001b[0m\n\n[2026-09] - 1 task(s)\n"
+      }
+    ],
+    "commits": [
+      "612a0309f81c8c05cc4d9002e851977acd191691",
+      "81e07ff74918622a9d6fc4c87021fca6f91b54b9",
+      "ec4d5276ce611c6ab07223218c58347ab13d7dd9"
+    ]
+  },
+  "B": {
+    "commands": [
+      {
+        "command": "\"C:\\\\Program Files\\\\PowerShell\\\\7\\\\pwsh.exe\" -Command \"python \\\"<fixture>\\\\profile\\\\.agents\\\\skills\\\\trellis-setup\\\\scripts\\\\auto_update.py\\\" apply-pending --project-root \\\"<fixture>\\\\parse-project\\\" --profile \\\"<fixture>\\\\profile\\\"\"",
+        "exit_code": 0,
+        "output": "{\"status\": \"deferred\", \"reason\": \"current-project-busy\"}\n"
+      },
+      {
+        "command": "\"C:\\\\Program Files\\\\PowerShell\\\\7\\\\pwsh.exe\" -Command \"python \\\"<fixture>\\\\profile\\\\.agents\\\\skills\\\\trellis-setup\\\\scripts\\\\auto_update.py\\\" check --background --project-root \\\"<fixture>\\\\parse-project\\\" --invocation-id \\\"duration-parser-20260912-01a08e91\\\" --profile \\\"<fixture>\\\\profile\\\" --release-fixture \\\"<fixture>\\\\release\\\\responses.json\\\"\"",
+        "exit_code": 0,
+        "output": "{\"status\": \"checking-in-background\", \"pid\": 1932}\n"
+      },
+      {
+        "command": "\"C:\\\\Program Files\\\\PowerShell\\\\7\\\\pwsh.exe\" -Command 'python -B quality_check.py'",
+        "exit_code": 1,
+        "output": "test_all_unit_combinations (test_duration.DurationTests.test_all_unit_combinations) ... ok\ntest_invalid_strings (test_duration.DurationTests.test_invalid_strings) ... ok\ntest_leading_zeroes_and_large_values (test_duration.DurationTests.test_leading_zeroes_and_large_values) ... ok\ntest_non_string_values (test_duration.DurationTests.test_non_string_values) ... ok\ntest_surrounding_and_segment_whitespace (test_duration.DurationTests.test_surrounding_and_segment_whitespace) ... ok\ntest_zero_values_and_values_over_sixty (test_duration.DurationTests.test_zero_values_and_values_over_sixty) ... FAIL\n\n======================================================================\nFAIL: test_zero_values_and_values_over_sixty (test_duration.DurationTests.test_zero_values_and_values_over_sixty)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<fixture>\\parse-project\\tests\\test_duration.py\", line 24, in test_zero_values_and_values_over_sixty\n    self.assertEqual(parse_duration(\"2h 90m 120s\"), 12600)\nAssertionError: 12720 != 12600\n\n----------------------------------------------------------------------\nRan 6 tests in 0.002s\n\nFAILED (failures=1)\n"
+      },
+      {
+        "command": "\"C:\\\\Program Files\\\\PowerShell\\\\7\\\\pwsh.exe\" -Command 'python -B quality_check.py'",
+        "exit_code": 0,
+        "output": "test_all_unit_combinations (test_duration.DurationTests.test_all_unit_combinations) ... ok\ntest_invalid_strings (test_duration.DurationTests.test_invalid_strings) ... ok\ntest_leading_zeroes_and_large_values (test_duration.DurationTests.test_leading_zeroes_and_large_values) ... ok\ntest_non_string_values (test_duration.DurationTests.test_non_string_values) ... ok\ntest_surrounding_and_segment_whitespace (test_duration.DurationTests.test_surrounding_and_segment_whitespace) ... ok\ntest_zero_values_and_values_over_sixty (test_duration.DurationTests.test_zero_values_and_values_over_sixty) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.001s\n\nOK\n"
+      },
+      {
+        "command": "\"C:\\\\Program Files\\\\PowerShell\\\\7\\\\pwsh.exe\" -Command 'python -B quality_check.py'",
+        "exit_code": 0,
+        "output": "test_all_unit_combinations (test_duration.DurationTests.test_all_unit_combinations) ... ok\ntest_invalid_strings (test_duration.DurationTests.test_invalid_strings) ... ok\ntest_leading_zeroes_and_large_values (test_duration.DurationTests.test_leading_zeroes_and_large_values) ... ok\ntest_non_string_values (test_duration.DurationTests.test_non_string_values) ... ok\ntest_surrounding_and_segment_whitespace (test_duration.DurationTests.test_surrounding_and_segment_whitespace) ... ok\ntest_zero_values_and_values_over_sixty (test_duration.DurationTests.test_zero_values_and_values_over_sixty) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.000s\n\nOK\n"
+      },
+      {
+        "command": "\"C:\\\\Program Files\\\\PowerShell\\\\7\\\\pwsh.exe\" -Command \"python .\\\\.trellis\\\\scripts\\\\add_session.py --title \\\"Implement duration parser\\\" --commit \\\"cf4f631\\\" --summary \\\"Implemented ordered h/m/s duration parsing with strict validation, added boundary tests and README usage. python -B quality_check.py passed all 6 tests on commit cf4f631. No remote push.\\\"\"",
+        "exit_code": 0,
+        "output": "========================================\nADD SESSION\n========================================\n\nSession: 1\nTitle: Implement duration parser\nCommit: cf4f631\n\nCurrent journal file: journal-1.md\nCurrent lines: 7\nNew content lines: 21\nTotal after append: 28\n\n[OK] Appended session to journal-1.md\n\n\n========================================\n[OK] Session 1 added successfully!\n========================================\n\nFiles updated:\n  - journal-1.md\n  - index.md\n\n[OK] Auto-committed: chore: record journal\nUpdating index.md for session 1...\n  Title: Implement duration parser\n  Commit: `cf4f631`\n  Active File: journal-1.md\n\n[OK] Updated index.md successfully!\n"
+      },
+      {
+        "command": "\"C:\\\\Program Files\\\\PowerShell\\\\7\\\\pwsh.exe\" -Command \"python \\\"<fixture>\\\\profile\\\\.agents\\\\skills\\\\trellis-setup\\\\scripts\\\\auto_update.py\\\" apply-pending --project-root \\\"<fixture>\\\\parse-project\\\" --wait-seconds 15 --profile \\\"<fixture>\\\\profile\\\"\"",
+        "exit_code": 0,
+        "output": "{\"status\": \"updated\", \"version\": \"1.4.2\", \"global_updated\": true, \"projects_updated\": [\"<fixture>\\\\format-project\", \"<fixture>\\\\parse-project\"], \"pending_projects\": [], \"changed_files\": 10}\n"
+      }
+    ],
+    "commits": [
+      "cf4f63116e9b37446d7787ed6b128342a61fd061",
+      "a0313d78c2b0e5c58c454eb0219ae7263ff715f7",
+      "e70ad4be54b374d77f693ee17ff5d3daa23764d5"
+    ]
+  },
+  "limits": [
+    "A used the candidate before the final paused-bootstrap condition fix.",
+    "B installed simulated 1.4.2 built from final source; source and installed files were compared byte-for-byte.",
+    "Auto-update left managed skill changes outside the already committed business task."
+  ],
+  "final_simulated_state": {
+    "version": "1.4.2",
+    "pending_projects": [],
+    "verified_files_per_skill_directory": 53,
+    "directories_verified": 3,
+    "working_copy_sha256": {
+      "auto_update.py": "cb2f5619d0d90f8edb95b33944858bc3d6567e6ef06839f75017b19c2c7f1c28",
+      "local_install.py": "fd92476b6230b78f434ebeb2724c2f418fc4fee1e3d1fdc13a41d0646922628c",
+      "upgrade_project.py": "83ab85d9a2853e135150b4b1da0d8ba98e70842b61f2a8805e25c2be9ba637dc"
+    }
+  },
+  "lf_normalized_source_sha256": {
+    "auto_update.py": "cb2f5619d0d90f8edb95b33944858bc3d6567e6ef06839f75017b19c2c7f1c28",
+    "local_install.py": "fd92476b6230b78f434ebeb2724c2f418fc4fee1e3d1fdc13a41d0646922628c",
+    "upgrade_project.py": "83ab85d9a2853e135150b4b1da0d8ba98e70842b61f2a8805e25c2be9ba637dc"
+  }
+}

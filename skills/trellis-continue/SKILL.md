@@ -5,6 +5,15 @@ description: "Resume work on the current task. Loads the workflow Phase Index, f
 
 # Continue Current Task
 
+On each actual user resume turn, the main session invokes the global
+`trellis-setup/scripts/auto_update.py check --background --project-root <root>
+--invocation-id <unique-user-turn-id>`. Reuse the id from trellis-start if it
+already ran this turn. Read `status --project-root <root>` and use its
+`skills_source` for pinned task skills. Continue working while the check runs.
+Install only at the safe boundaries defined by the global update rules; after
+archive and journal, finish-work invokes `apply-pending --wait-seconds 15`.
+Delegated agents and progress-only questions do not start update operations.
+
 Resume work on the current task — pick up at the right phase/step in `.trellis/workflow.md`.
 
 ---

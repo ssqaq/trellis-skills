@@ -27,6 +27,37 @@ ROUTE = (
     "completion. Do not wait for another user message or status=completed. "
     "Check/implement sub-agents return their result to the main session; they do not archive."
 )
+UPDATE_GUIDE = """## Task-triggered skill package updates (1.4+)
+
+In the main session only, once per actual task start/resume user turn, resolve
+the global helper at `<user-profile>/.agents/skills/trellis-setup/scripts/auto_update.py`.
+Before starting a new task, run `apply-pending --project-root <root>`; it defers
+installation if this project is still busy. Then run
+`check --background --project-root <root> --invocation-id <unique-user-turn-id>`.
+Use one new id for each user start/resume turn and reuse it across nested skill
+calls in that turn. The worker checks the official GitHub release and downloads
+it without blocking implementation. There is no hourly/daily polling cache.
+
+Run `status --project-root <root>` and use its `skills_source` for this task's
+Trellis skills. Busy projects may be pinned to their previous skills, including
+projects that normally use only global skills. Do not replace their pinned
+rules or run a skill refresh while an update is deferred. The updater itself
+always comes from the global installation, even when task skills are pinned.
+
+After the real full finish check, task archive AND journal recording are done,
+run the global helper's `apply-pending --project-root <root> --wait-seconds 15`
+before the final reply. This applies the prepared update and catches up idle
+registered projects. Other busy/offline projects stay pending for later safe
+boundaries. Do not repeat the task quality gate just because skill files updated.
+Do not claim all projects updated if the returned pending list is non-empty.
+
+Progress questions, delegated agents, stops and Trellis opt-out do not invoke
+these update steps. In Plan/read-only mode, only `check`/`status` are allowed,
+never `apply-pending`, `install`, `sync` or workflow migration. Downloads and
+checks never install automatically: only the main session's safe boundary does.
+On network failure continue the task with the existing version. Briefly report
+an update, failure or pending project; keep unchanged/current checks quiet.
+"""
 BLOCK = f"""{START}
 ## Automatic Trellis task closeout
 
@@ -59,6 +90,8 @@ repeat the full gate when code or check inputs changed. A GitHub push request
 alone is not a new quality-check trigger. Use plain-language README/Release
 notes when publishing; do not create a Release unless publication scope includes it.
 
+{UPDATE_GUIDE}
+
 This block supplements project-specific instructions and replaces the old
 manual wrap-up reminder. It is an AI workflow instruction, not an application
 idle/close hook or a background GitHub watcher.
@@ -75,7 +108,8 @@ questions, progress updates and paused/stopped work are outside its scope.
 
 Before following a newly initialized or older project's workflow, check for
 `TRELLIS-SKILLS:AUTOFINISH:START` in its `AGENTS.md` and selected workflow.
-If missing, run the current global helper with the actual project root:
+If missing and this project has no deferred busy update, run the current global
+helper with the actual project root (execution mode only):
 
 `python <user-profile>/.agents/skills/trellis-setup/scripts/upgrade_project.py --project-root <project-root> --sync-skills --register`
 
@@ -91,6 +125,8 @@ reply, without asking the user to repeat a finish command. Wait for its real ful
 Delegated implement/check agents return their results and do not archive.
 An app idle/close event or a GitHub push-only request is not a new gate trigger.
 Preserve the user's existing authorization and any explicit stop or opt-out.
+
+{UPDATE_GUIDE}
 {GLOBAL_END}
 """
 
@@ -326,6 +362,20 @@ def main() -> None:
     if args.check:
         result = upgrade(args.project_root, args.backup_root, True)
     else:
+        if args.sync_skills and args.register:
+            # The 1.4 installer owns version/pin bookkeeping and busy deferral.
+            # Keep the historical command working without bypassing that path.
+            state_file = args.registry_path.parent / "installed.json"
+            if state_file.exists():
+                import local_install
+                state = local_install.read_json(state_file, {})
+                if state.get("package"):
+                    profile = args.registry_path.parent.parent if args.registry_path.parent.name == ".trellis-skills" else profile_dir()
+                    result = local_install.install(Path(state["package"]), profile,
+                        global_install=False, project_roots=[args.project_root],
+                        registry_path=args.registry_path, backup_root=args.backup_root)
+                    print(json.dumps(result, ensure_ascii=True))
+                    return
         # Validate first; write readiness markers only after all setup phases
         # that can fail (skill refresh and registration) have succeeded.
         upgrade(args.project_root, args.backup_root, True)

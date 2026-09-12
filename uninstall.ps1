@@ -1,5 +1,8 @@
 # Remove this package's global Trellis skills and its own global instruction block.
 $ErrorActionPreference = 'Stop'
+$updateHelper = Join-Path $PSScriptRoot 'skills\trellis-setup\scripts\auto_update.py'
+& python -B $updateHelper disable
+if ($LASTEXITCODE -ne 0) { throw 'Failed to disable automatic updates; uninstall stopped.' }
 $profileRoot = [IO.Path]::GetFullPath($env:USERPROFILE).TrimEnd('\')
 $roots = @((Join-Path $profileRoot '.agents\skills'), (Join-Path $profileRoot '.codex\skills'))
 $sourceRoot = Join-Path $PSScriptRoot 'skills'

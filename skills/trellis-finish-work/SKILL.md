@@ -118,3 +118,18 @@ python ./.trellis/scripts/add_session.py \
 Use the work-commit hashes produced in Phase 3.4 (visible in Step 1's `Recent commits` list, or via `git log --oneline`) for `--commit`. Do not include the archive commit hashes from Step 3. This produces a `chore: record journal` commit.
 
 Final git log order: `<work commits from 3.4>` → `chore(task): archive ...` (one or more) → `chore: record journal`.
+
+## Step 5: Apply prepared skill updates
+
+After the full gate, archive and journal above have finished, the main session
+runs the current GLOBAL `trellis-setup/scripts/auto_update.py` with
+`apply-pending --project-root <root> --wait-seconds 15`. Use the global updater
+even if the task itself used an older pinned skill set. This updates global
+skills and idle registered projects; busy/offline projects remain pending and
+are caught up at a later safe start/finish boundary. No extra user command is needed.
+
+If another task in this project is still executing, accept `deferred` and keep
+its rules intact. A check/download/install failure does not undo the completed
+business task; report the update failure separately. Report updated versions
+and pending projects accurately; unchanged results stay quiet. Do not rerun
+the business quality gate merely because packaged skill instructions changed.

@@ -5,6 +5,19 @@ description: "Initializes an AI development session by reading workflow guides, 
 
 # Start Session
 
+## Background release check
+
+In the main session, follow the task-triggered update section of the installed
+global/project rules before loading task skills. Use the global
+`trellis-setup/scripts/auto_update.py`: first `apply-pending --project-root <root>`
+at an idle start boundary, then `check --background --project-root <root>
+--invocation-id <unique-user-turn-id>`. Obtain `status --project-root <root>`
+and load the returned `skills_source` so a busy project keeps its previous rules.
+Reuse the same invocation id if continue/setup is called in this user turn.
+In Plan mode only check/status are allowed; never apply, sync or migrate.
+The complete behavior and errors are documented in the installed setup skill's
+`references/automatic-updates.md`.
+
 Initialize a Trellis-managed development session. This platform has no session-start hook, so manually load the equivalent compact context by following these steps.
 
 ---
@@ -25,6 +38,7 @@ use the current global `trellis-setup/scripts/upgrade_project.py` with
 closeout before reading phase instructions. This also supports projects created
 by a manual `trellis init`. Preserve project-specific instructions; report any
 migration failure rather than assuming the route exists.
+Skip this migration when status reports a deferred busy-project update.
 
 Compact Phase Index, request triage rules, planning artifact contract, and the step-detail command.
 

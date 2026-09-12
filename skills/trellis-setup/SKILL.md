@@ -5,6 +5,11 @@ description: "Set up Trellis for the current project: check global skills and th
 
 # Trellis Setup
 
+The 1.4 installer enables task-triggered stable-release updates. Read
+[automatic update behavior](references/automatic-updates.md) when setting up,
+troubleshooting or explaining this feature. Only normal main-session task
+start/resume and completed closeout invoke it; read-only planning never installs.
+
 Initialize Trellis for the current project, or verify it is already working. Do this before any Trellis task is created in this project.
 
 ## Step 1: Check whether this project already has a cabinet
